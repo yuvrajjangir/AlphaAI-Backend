@@ -1,70 +1,114 @@
 import sequelize from './config/database';
-import { Campaign, Company, Person, ContextSnippet, SearchLog } from './models';
+import { Campaign, Company, Person } from './models';
 
 async function seed() {
   try {
     await sequelize.sync({ force: true });
 
-    // Create Campaign
     const campaign = await Campaign.create({
       name: 'Q3 2025 Tech Companies',
     });
 
-    // Create Company
-    const company = await Company.create({
-      name: 'Stripe',
-      campaignId: campaign.id,
-    });
-
-    // Create People
-    const people = await Person.bulkCreate([
+    const companiesData = [
       {
-        fullName: 'Patrick Collison',
-        email: 'patrick@stripe.com',
-        title: 'CEO',
-        companyId: company.id,
+        name: 'Stripe',
+        people: [
+          { fullName: 'Patrick Collison', email: 'patrick@stripe.com', title: 'CEO' },
+          { fullName: 'John Collison', email: 'john@stripe.com', title: 'President' },
+        ],
       },
       {
-        fullName: 'John Collison',
-        email: 'john@stripe.com',
-        title: 'President',
-        companyId: company.id,
+        name: 'OpenAI',
+        people: [
+          { fullName: 'Sam Altman', email: 'sam@openai.com', title: 'CEO' },
+          { fullName: 'Mira Murati', email: 'mira@openai.com', title: 'CTO' },
+        ],
       },
-    ]);
+      {
+        name: 'Google',
+        people: [
+          { fullName: 'Sundar Pichai', email: 'sundar@google.com', title: 'CEO' },
+          { fullName: 'Prabhakar Raghavan', email: 'prabhakar@google.com', title: 'SVP' },
+        ],
+      },
+      {
+        name: 'Meta',
+        people: [
+          { fullName: 'Mark Zuckerberg', email: 'mark@meta.com', title: 'CEO' },
+          { fullName: 'Andrew Bosworth', email: 'bosworth@meta.com', title: 'CTO' },
+        ],
+      },
+      {
+        name: 'Amazon',
+        people: [
+          { fullName: 'Andy Jassy', email: 'andy@amazon.com', title: 'CEO' },
+          { fullName: 'Adam Selipsky', email: 'adam@amazon.com', title: 'CEO, AWS' },
+        ],
+      },
+      {
+        name: 'Netflix',
+        people: [
+          { fullName: 'Ted Sarandos', email: 'ted@netflix.com', title: 'Co-CEO' },
+          { fullName: 'Greg Peters', email: 'greg@netflix.com', title: 'Co-CEO' },
+        ],
+      },
+      {
+        name: 'Microsoft',
+        people: [
+          { fullName: 'Satya Nadella', email: 'satya@microsoft.com', title: 'CEO' },
+          { fullName: 'Scott Guthrie', email: 'scott@microsoft.com', title: 'EVP, Cloud' },
+        ],
+      },
+      {
+        name: 'Apple',
+        people: [
+          { fullName: 'Tim Cook', email: 'tim@apple.com', title: 'CEO' },
+          { fullName: 'Craig Federighi', email: 'craig@apple.com', title: 'SVP, Software' },
+        ],
+      },
+      {
+        name: 'Adobe',
+        people: [
+          { fullName: 'Shantanu Narayen', email: 'shantanu@adobe.com', title: 'CEO' },
+          { fullName: 'Anil Chakravarthy', email: 'anil@adobe.com', title: 'President' },
+        ],
+      },
+      {
+        name: 'Salesforce',
+        people: [
+          { fullName: 'Marc Benioff', email: 'marc@salesforce.com', title: 'CEO' },
+          { fullName: 'Parker Harris', email: 'parker@salesforce.com', title: 'Co-Founder' },
+        ],
+      },
+      {
+        name: 'Twilio',
+        people: [
+          { fullName: 'Jeff Lawson', email: 'jeff@twilio.com', title: 'CEO' },
+          { fullName: 'Khozema Shipchandler', email: 'khozema@twilio.com', title: 'President' },
+        ],
+      },
+      {
+        name: 'Shopify',
+        people: [
+          { fullName: 'Tobi Lütke', email: 'tobi@shopify.com', title: 'CEO' },
+          { fullName: 'Harley Finkelstein', email: 'harley@shopify.com', title: 'President' },
+        ],
+      },
+    ];
 
-    // Create ContextSnippet for Stripe
-    await ContextSnippet.create({
-      companyId: company.id,
-      personId: people[0].id, // Associating with Patrick Collison
-      companyValueProp:
-        "Stripe is a technology company that builds economic infrastructure for the internet. Businesses of every size use Stripe's software and APIs to accept payments, send payouts, and manage their businesses online.",
-      productNames: [
-        'Stripe Payments',
-        'Stripe Connect',
-        'Stripe Billing',
-        'Stripe Terminal',
-        'Stripe Atlas',
-        'Stripe Radar',
-        'Stripe Identity',
-      ],
-      pricingModel:
-        'Transaction-based pricing with 2.9% + $0.30 per successful card charge for basic payments. Enterprise pricing available for high-volume customers.',
-      keyCompetitors: [
-        'PayPal',
-        'Square',
-        'Adyen',
-        'Braintree',
-        'Checkout.com',
-      ],
-      companyDomain: 'stripe.com',
-      topLinks: [
-        'https://stripe.com/about',
-        'https://stripe.com/docs',
-        'https://stripe.com/customers',
-        'https://stripe.com/newsroom',
-        'https://stripe.com/blog',
-      ],
-    });
+    for (const companyData of companiesData) {
+      const company = await Company.create({
+        name: companyData.name,
+        campaignId: campaign.id,
+      });
+
+      const peopleWithCompanyId = companyData.people.map((person) => ({
+        ...person,
+        companyId: company.id,
+      }));
+
+      await Person.bulkCreate(peopleWithCompanyId);
+    }
 
     console.log('Seeding completed successfully.');
     process.exit(0);
