@@ -9,6 +9,8 @@ import { Queue } from 'bullmq';
 import { researchWorker } from './worker/researchWorker';
 import { redisConnection } from './config/redis';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './config/swagger';
 
 const app: Application = express();
 const port = process.env.PORT || 3000;
@@ -31,6 +33,15 @@ if (!researchWorker.isRunning()) {
 
 // Make queue available in app locals
 app.locals.researchQueue = researchQueue;
+
+// API Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// API Documentation in JSON format
+app.get('/api-docs.json', (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
 
 // Routes
 app.use('/api', routes);

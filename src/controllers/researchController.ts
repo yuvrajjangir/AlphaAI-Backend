@@ -3,7 +3,47 @@ import { Person, ContextSnippet } from '../models';
 // import { ResearchService } from '../services/ResearchService'; // ❌ Comment if unused
 import researchQueue from '../queue/researchQueue';
 
+/**
+ * @swagger
+ * tags:
+ *   name: Research
+ *   description: Research management and operations
+ */
 export class ResearchController {
+  /**
+   * @swagger
+   * /api/research/{person_id}:
+   *   post:
+   *     summary: Trigger research for a person
+   *     tags: [Research]
+   *     parameters:
+   *       - in: path
+   *         name: person_id
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The ID of the person to research
+   *     responses:
+   *       200:
+   *         description: Research started or existing research found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                 isExisting:
+   *                   type: boolean
+   *                 data:
+   *                   $ref: '#/components/schemas/ContextSnippet'
+   *                 jobId:
+   *                   type: string
+   *       404:
+   *         $ref: '#/components/responses/NotFound'
+   *       500:
+   *         $ref: '#/components/responses/InternalError'
+   */
   public static async triggerResearch(req: Request, res: Response): Promise<void> {
     try {
       const { person_id } = req.params;
@@ -48,6 +88,58 @@ export class ResearchController {
     }
   }
 
+  /**
+   * @swagger
+   * /api/research/jobs/{job_id}:
+   *   get:
+   *     summary: Get the status of a research job
+   *     tags: [Research]
+   *     parameters:
+   *       - in: path
+   *         name: job_id
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The ID of the job to check
+   *     responses:
+   *       200:
+   *         description: Job status retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 id:
+   *                   type: string
+   *                 state:
+   *                   type: string
+   *                 progress:
+   *                   type: number
+   *                 data:
+   *                   type: object
+   *                 result:
+   *                   type: object
+   *                 timestamps:
+   *                   type: object
+   *                   properties:
+   *                     created:
+   *                       type: number
+   *                     started:
+   *                       type: number
+   *                     finished:
+   *                       type: number
+   *                 attempts:
+   *                   type: object
+   *                   properties:
+   *                     current:
+   *                       type: number
+   *                     max:
+   *                       type: number
+   *       404:
+   *         $ref: '#/components/responses/NotFound'
+   *       500:
+   *         $ref: '#/components/responses/InternalError'
+   */
   public static async getJobStatus(req: Request, res: Response): Promise<void> {
     try {
       const { job_id } = req.params;
@@ -87,6 +179,41 @@ export class ResearchController {
     }
   }
 
+  /**
+   * @swagger
+   * /api/research/status:
+   *   put:
+   *     summary: Bulk update research status for multiple people
+   *     tags: [Research]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               personIds:
+   *                 type: array
+   *                 items:
+   *                   type: number
+   *               status:
+   *                 type: string
+   *             required:
+   *               - personIds
+   *               - status
+   *     responses:
+   *       200:
+   *         description: Research status updated successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *       500:
+   *         $ref: '#/components/responses/InternalError'
+   */
   public static async bulkUpdateResearchStatus(req: Request, res: Response): Promise<void> {
     const { personIds, status } = req.body;
 

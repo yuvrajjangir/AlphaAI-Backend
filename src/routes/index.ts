@@ -6,6 +6,7 @@ import { EventsController } from '../controllers/eventsController';
 import { ResearchController } from '../controllers/researchController';
 import { CompanyController } from '../controllers/companyController';
 import { CampaignController } from '../controllers/campaignController';
+import researchWorker from '../worker/researchWorker';
 
 const router = Router();
 
@@ -25,6 +26,7 @@ router.post('/people', PeopleController.create);
 // router.post('/people/:person_id/research', ResearchController.triggerResearch);
 router.post('/enrich/:person_id', ResearchController.triggerResearch); // Alias for research endpoint
 router.get('/research/jobs/:job_id', ResearchController.getJobStatus);
+router.put('/research/status', ResearchController.bulkUpdateResearchStatus);
 
 // Snippets routes
 router.get('/snippets/company/:company_id', SnippetsController.getByCompany);

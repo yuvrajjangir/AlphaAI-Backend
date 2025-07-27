@@ -10,7 +10,8 @@
     "migrate": "ts-node migrate.ts",
     "migrate:undo": "ts-node migrate-undo.ts",
     "format": "prettier --write \"src/**/*.{ts,js,json}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,js,json}\""
+    "format:check": "prettier --check \"src/**/*.{ts,js,json}\"",
+    "swagger": "ts-node -r dotenv/config scripts/generate-swagger.ts"
   },
   "keywords": [],
   "author": "",
