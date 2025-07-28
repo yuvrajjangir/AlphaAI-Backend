@@ -2,6 +2,24 @@
 
 A TypeScript-based backend service for enriching and researching company and people data using queues, workers, and AI.
 
+## Tech Stacks
+
+This project uses the following technologies and tools:
+
+- **Node.js**: JavaScript runtime environment
+- **TypeScript**: Typed superset of JavaScript
+- **Express**: Web framework for Node.js
+- **PostgreSQL**: Relational database
+- **Sequelize**: ORM for Node.js and PostgreSQL
+- **Redis**: In-memory data structure store, used as a message broker
+- **BullMQ**: Queue system for handling background jobs
+- **Docker & Docker Compose**: Containerization and orchestration
+- **Swagger (OpenAPI 3.0)**: API documentation
+- **ESLint & Prettier**: Code linting and formatting
+- **Other dependencies** as listed in `package.json`
+
+These technologies enable scalable, maintainable, and efficient backend service development.
+
 ## Quick Start
 
 ### Prerequisites
@@ -148,3 +166,4 @@ The service provides a health endpoint at `/healthz` that monitors:
 - Database connectivity
 - Redis connection
 - Worker status
+
