@@ -52,7 +52,7 @@ router.get(
 );
 
 // SSE endpoints
-router.get('/events/jobs/:jobId', EventsController.streamJobUpdates);
+router.get('/events/jobs/:jobId', apiKeyAuth, EventsController.streamJobUpdates);
 
 // Health check
 router.get('/healthz', apiKeyAuth, HealthController.check);

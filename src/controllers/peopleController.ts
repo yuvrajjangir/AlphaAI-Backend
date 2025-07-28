@@ -3,6 +3,7 @@ import Person from '../models/Person';
 import Company from '../models/Company';
 import { Queue } from 'bullmq';
 import { redisConnection } from '../config/redis';
+import { ContextSnippet } from '../models';
 
 /**
  * @swagger
@@ -227,6 +228,24 @@ export class PeopleController {
         res
           .status(400)
           .json({ error: 'Person must be associated with a company' });
+        return;
+      }
+
+      const existingResearch = await ContextSnippet.findOne({
+        where: {
+          personId: person.id,
+          companyId: person.companyId,
+        },
+        order: [['createdAt', 'DESC']],
+      });
+
+      if (existingResearch) {
+        res.json({
+          message: 'Research found in database',
+          isExisting: true,
+          data: existingResearch,
+          jobId: null,
+        });
         return;
       }
 
