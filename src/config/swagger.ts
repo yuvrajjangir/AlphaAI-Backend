@@ -14,11 +14,19 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
-        url: 'http://localhost:3000',
+        url: 'http://localhost:3000/api',
         description: 'Development server',
       },
     ],
     components: {
+      securitySchemes: {
+        ApiKeyAuth: {
+          type: 'apiKey',
+          in: 'header',
+          name: 'x-api-key',
+          description: 'API key needed to access the endpoints',
+        },
+      },
       schemas: {
         Person: {
           type: 'object',
@@ -69,7 +77,16 @@ const options: swaggerJsdoc.Options = {
             createdAt: { type: 'string', format: 'date-time' },
             updatedAt: { type: 'string', format: 'date-time' },
           },
-          required: ['companyId', 'personId', 'companyValueProp', 'productNames', 'pricingModel', 'keyCompetitors', 'companyDomain', 'topLinks'],
+          required: [
+            'companyId',
+            'personId',
+            'companyValueProp',
+            'productNames',
+            'pricingModel',
+            'keyCompetitors',
+            'companyDomain',
+            'topLinks',
+          ],
         },
         Error: {
           type: 'object',
@@ -101,6 +118,11 @@ const options: swaggerJsdoc.Options = {
         },
       },
     },
+    security: [
+      {
+        ApiKeyAuth: [],
+      },
+    ],
   },
   apis: ['./src/routes/*.ts', './src/controllers/*.ts'],
 };

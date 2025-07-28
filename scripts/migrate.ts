@@ -1,4 +1,4 @@
-import sequelize from './src/config/database';
+import sequelize from '../src/config/database';
 import { DataTypes, QueryInterface } from 'sequelize';
 import * as fs from 'fs';
 import * as path from 'path';

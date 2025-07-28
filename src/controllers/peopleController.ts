@@ -4,9 +4,35 @@ import Company from '../models/Company';
 import { Queue } from 'bullmq';
 import { redisConnection } from '../config/redis';
 
+/**
+ * @swagger
+ * tags:
+ *   name: People
+ *   description: People management
+ */
 const researchQueue = new Queue('research', { connection: redisConnection });
 
 export class PeopleController {
+  /**
+   * @swagger
+   * /people:
+   *   get:
+   *     summary: Get all people
+   *     tags: [People]
+   *     security:
+   *       - ApiKeyAuth: []
+   *     responses:
+   *       200:
+   *         description: List of people
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 $ref: '#/components/schemas/Person'
+   *       500:
+   *         $ref: '#/components/responses/InternalError'
+   */
   public static async listAll(req: Request, res: Response): Promise<void> {
     try {
       const people = await Person.findAll({
@@ -19,6 +45,60 @@ export class PeopleController {
     }
   }
 
+  /**
+   * @swagger
+   * /people:
+   *   post:
+   *     summary: Create a new person
+   *     tags: [People]
+   *     security:
+   *       - ApiKeyAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - full_name
+   *               - email
+   *               - company_id
+   *             properties:
+   *               full_name:
+   *                 type: string
+   *                 description: Full name of the person
+   *               email:
+   *                 type: string
+   *                 format: email
+   *                 description: Email address
+   *               company_id:
+   *                 type: integer
+   *                 description: ID of the company
+   *               title:
+   *                 type: string
+   *                 description: Job title
+   *     responses:
+   *       201:
+   *         description: Person created
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Person'
+   *       400:
+   *         description: Missing required fields
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       404:
+   *         description: Company not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         $ref: '#/components/responses/InternalError'
+   */
   public static async create(req: Request, res: Response): Promise<void> {
     try {
       // Validate required fields in request body
@@ -76,6 +156,57 @@ export class PeopleController {
     }
   }
 
+  /**
+   * @swagger
+   * /enrich/{person_id}:
+   *   post:
+   *     summary: Trigger enrichment research for a person
+   *     tags: [People]
+   *     security:
+   *       - ApiKeyAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: person_id
+   *         schema:
+   *           type: string
+   *         required: true
+   *         description: ID of the person to enrich
+   *     responses:
+   *       200:
+   *         description: Research started
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                 jobId:
+   *                   type: string
+   *                 person:
+   *                   $ref: '#/components/schemas/Person'
+   *                 company:
+   *                   type: object
+   *                   properties:
+   *                     id:
+   *                       type: integer
+   *                     name:
+   *                       type: string
+   *       404:
+   *         description: Person not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       400:
+   *         description: Person must be associated with a company
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         $ref: '#/components/responses/InternalError'
+   */
   public static async triggerEnrichment(
     req: Request,
     res: Response,

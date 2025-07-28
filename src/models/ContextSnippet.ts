@@ -33,7 +33,6 @@ class ContextSnippet
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
-  // Add association accessors
   public readonly company?: Company;
   public readonly person?: Person;
 }
@@ -117,7 +116,6 @@ ContextSnippet.init(
   },
 );
 
-// Define associations
 ContextSnippet.belongsTo(Company, {
   foreignKey: 'companyId',
   as: 'company',

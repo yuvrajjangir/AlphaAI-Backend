@@ -1,7 +1,40 @@
 import { Request, Response } from 'express';
 import { JobEvents } from '../services/JobEvents';
 
+/**
+ * @swagger
+ * tags:
+ *   name: Events
+ *   description: Event streaming and updates
+ */
 export class EventsController {
+  /**
+   * @swagger
+   * /events/jobs/{jobId}:
+   *   get:
+   *     summary: Stream job updates via Server-Sent Events (SSE)
+   *     tags: [Events]
+   *     parameters:
+   *       - in: path
+   *         name: jobId
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: Job ID to stream updates for
+   *     responses:
+   *       200:
+   *         description: Stream of job updates
+   *         content:
+   *           text/event-stream:
+   *             schema:
+   *               type: string
+   *       400:
+   *         description: Job ID is required
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   */
   public static async streamJobUpdates(
     req: Request,
     res: Response,
@@ -13,23 +46,19 @@ export class EventsController {
       return;
     }
 
-    // Set headers for SSE
     res.writeHead(200, {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
       Connection: 'keep-alive',
     });
 
-    // Helper function to send SSE data
     const sendEvent = (data: any) => {
       res.write(`data: ${JSON.stringify(data)}\n\n`);
     };
 
-    // Subscribe to job events
     const jobEvents = JobEvents.getInstance();
     jobEvents.onJobProgress(jobId, sendEvent);
 
-    // Handle client disconnect
     req.on('close', () => {
       jobEvents.removeJobListeners(jobId);
     });

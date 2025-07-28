@@ -17,7 +17,11 @@ export class JobEvents extends EventEmitter {
     return JobEvents.instance;
   }
 
-  public emitProgress(jobId: string, progress: number, state: string = 'in_progress') {
+  public emitProgress(
+    jobId: string,
+    progress: number,
+    state: string = 'in_progress',
+  ) {
     const data = { jobId, progress, state };
     this.emit(`job:${jobId}`, data);
   }
@@ -25,7 +29,6 @@ export class JobEvents extends EventEmitter {
   public onJobProgress(jobId: string, callback: JobListener) {
     this.on(`job:${jobId}`, callback);
 
-    // Track for cleanup
     if (!this.listenersMap.has(jobId)) {
       this.listenersMap.set(jobId, []);
     }

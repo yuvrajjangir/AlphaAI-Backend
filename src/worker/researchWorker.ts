@@ -31,7 +31,6 @@ export const researchWorker = new Worker<ResearchJob>(
       const company = await Company.findByPk(job.data.companyId);
       if (!company) throw new Error(`Company ${job.data.companyId} not found`);
 
-      // === Step 1: 25% ===
       await job.updateProgress(25);
       jobEvents.emitProgress(jobId, 25);
 
@@ -57,7 +56,6 @@ Return only the JSON — no extra text.
       if (!companyMatch) throw new Error('Invalid company response');
       const companyResearchData = JSON.parse(companyMatch[0]);
 
-      // === Step 2: 50% ===
       await job.updateProgress(50);
       jobEvents.emitProgress(jobId, 50);
 
@@ -79,11 +77,9 @@ Return only the JSON — no extra text.
       if (!personMatch) throw new Error('Invalid person response');
       const searchResults: SearchResult[] = JSON.parse(personMatch[0]);
 
-      // === Step 3: 75% ===
       await job.updateProgress(75);
       jobEvents.emitProgress(jobId, 75);
 
-      // Convert pricingModel to string if it's an object or array
       let pricingModelStr = '';
       if (typeof companyResearchData.pricingModel === 'string') {
         pricingModelStr = companyResearchData.pricingModel;
@@ -97,9 +93,13 @@ Return only the JSON — no extra text.
         companyId: company.id,
         personId: person.id,
         companyValueProp: companyResearchData.companyValueProp || '',
-        productNames: Array.isArray(companyResearchData.productNames) ? companyResearchData.productNames : [],
+        productNames: Array.isArray(companyResearchData.productNames)
+          ? companyResearchData.productNames
+          : [],
         pricingModel: pricingModelStr,
-        keyCompetitors: Array.isArray(companyResearchData.keyCompetitors) ? companyResearchData.keyCompetitors : [],
+        keyCompetitors: Array.isArray(companyResearchData.keyCompetitors)
+          ? companyResearchData.keyCompetitors
+          : [],
         companyDomain: companyResearchData.topLinks?.[0] || '',
         topLinks: companyResearchData.topLinks || [],
       });
@@ -112,7 +112,6 @@ Return only the JSON — no extra text.
         },
       });
 
-      // === Step 4: 100% ===
       await job.updateProgress(100);
       jobEvents.emitProgress(jobId, 100, 'completed');
 
@@ -124,7 +123,10 @@ Return only the JSON — no extra text.
         snippetsCount: searchResults.length,
       };
     } catch (error) {
-      console.error(`❌ Research failed for person ${job.data.personId}:`, error);
+      console.error(
+        `❌ Research failed for person ${job.data.personId}:`,
+        error,
+      );
       throw error;
     }
   },
@@ -138,10 +140,9 @@ Return only the JSON — no extra text.
     removeOnFail: {
       age: 7 * 24 * 3600,
     },
-  }
+  },
 );
 
-// Worker events
 researchWorker.on('completed', (job) => {
   console.log(`🎉 Job ${job.id} completed`);
 });

@@ -1,8 +1,33 @@
 import { Request, Response } from 'express';
 import Campaign from '../models/Campaign';
 
+/**
+ * @swagger
+ * tags:
+ *   name: Campaigns
+ *   description: Campaign management
+ */
 export class CampaignController {
-  // Get all campaigns
+  /**
+   * @swagger
+   * /campaigns:
+   *   get:
+   *     summary: Get all campaigns
+   *     tags: [Campaigns]
+   *     security:
+   *       - ApiKeyAuth: []
+   *     responses:
+   *       200:
+   *         description: List of campaigns
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 $ref: '#/components/schemas/Campaign'
+   *       500:
+   *         $ref: '#/components/responses/InternalError'
+   */
   public static async listAll(req: Request, res: Response): Promise<void> {
     try {
       const campaigns = await Campaign.findAll({
@@ -15,7 +40,42 @@ export class CampaignController {
     }
   }
 
-  // Create a new campaign
+  /**
+   * @swagger
+   * /campaigns:
+   *   post:
+   *     summary: Create a new campaign
+   *     tags: [Campaigns]
+   *     security:
+   *       - ApiKeyAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - name
+   *             properties:
+   *               name:
+   *                 type: string
+   *                 description: Campaign name
+   *     responses:
+   *       201:
+   *         description: Campaign created
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Campaign'
+   *       400:
+   *         description: Campaign name is required
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         $ref: '#/components/responses/InternalError'
+   */
   public static async create(req: Request, res: Response): Promise<void> {
     try {
       const { name } = req.body;
@@ -36,7 +96,33 @@ export class CampaignController {
     }
   }
 
-  // Get campaign by ID
+  /**
+   * @swagger
+   * /campaigns/{id}:
+   *   get:
+   *     summary: Get campaign by ID
+   *     tags: [Campaigns]
+   *     security:
+   *       - ApiKeyAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         schema:
+   *           type: string
+   *         required: true
+   *         description: Campaign ID
+   *     responses:
+   *       200:
+   *         description: Campaign data
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Campaign'
+   *       404:
+   *         $ref: '#/components/responses/NotFound'
+   *       500:
+   *         $ref: '#/components/responses/InternalError'
+   */
   public static async getById(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;

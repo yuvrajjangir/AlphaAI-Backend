@@ -86,6 +86,15 @@ To enable real search:
 2. Implement your preferred search API integration
 3. Update environment variables if needed
 
+## API Documentation
+
+The backend service provides API documentation using Swagger (OpenAPI 3.0).
+
+- The Swagger UI is available at: [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+- The raw Swagger JSON specification can be accessed at: [http://localhost:3000/api-docs.json](http://localhost:3000/api-docs.json)
+
+This documentation includes all available API endpoints, request/response schemas, and authentication requirements.
+
 ## Future Work
 
 ### Scaling

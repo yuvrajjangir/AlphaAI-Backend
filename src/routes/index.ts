@@ -25,9 +25,21 @@ router.get('/people', apiKeyAuth, PeopleController.listAll);
 router.post('/people', apiKeyAuth, PeopleController.create);
 
 // Research routes
-router.post('/enrich/:person_id', apiKeyAuth, ResearchController.triggerResearch); // Alias for research endpoint
-router.get('/research/jobs/:job_id', apiKeyAuth, ResearchController.getJobStatus);
-router.put('/research/status', apiKeyAuth, ResearchController.bulkUpdateResearchStatus);
+router.post(
+  '/enrich/:person_id',
+  apiKeyAuth,
+  PeopleController.triggerEnrichment,
+); // Alias for research endpoint
+router.get(
+  '/research/jobs/:job_id',
+  apiKeyAuth,
+  ResearchController.getJobStatus,
+);
+router.put(
+  '/research/status',
+  apiKeyAuth,
+  ResearchController.bulkUpdateResearchStatus,
+);
 
 // Snippets routes
 router.get('/snippets/company/:company_id', SnippetsController.getByCompany);

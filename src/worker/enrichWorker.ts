@@ -3,11 +3,11 @@ import { redisConnection } from '../config/redis';
 import { Person, Company, ContextSnippet, SearchLog } from '../models';
 
 type EnrichmentField =
-| 'companyValueProp'
-| 'productNames'
-| 'pricingModel'
-| 'keyCompetitors'
-| 'companyDomain';
+  | 'companyValueProp'
+  | 'productNames'
+  | 'pricingModel'
+  | 'keyCompetitors'
+  | 'companyDomain';
 
 interface SearchResult {
   url: string;

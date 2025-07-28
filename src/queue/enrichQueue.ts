@@ -1,4 +1,3 @@
-// src/queue/enrichQueue.ts
 import { Queue } from 'bullmq';
 import { redisConnection } from '../config/redis';
 

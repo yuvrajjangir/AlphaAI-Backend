@@ -12,85 +12,7 @@ import researchQueue from '../queue/researchQueue';
 export class ResearchController {
   /**
    * @swagger
-   * /api/research/{person_id}:
-   *   post:
-   *     summary: Trigger research for a person
-   *     tags: [Research]
-   *     parameters:
-   *       - in: path
-   *         name: person_id
-   *         required: true
-   *         schema:
-   *           type: string
-   *         description: The ID of the person to research
-   *     responses:
-   *       200:
-   *         description: Research started or existing research found
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                 isExisting:
-   *                   type: boolean
-   *                 data:
-   *                   $ref: '#/components/schemas/ContextSnippet'
-   *                 jobId:
-   *                   type: string
-   *       404:
-   *         $ref: '#/components/responses/NotFound'
-   *       500:
-   *         $ref: '#/components/responses/InternalError'
-   */
-  public static async triggerResearch(req: Request, res: Response): Promise<void> {
-    try {
-      const { person_id } = req.params;
-
-      const person = await Person.findByPk(person_id);
-      if (!person) {
-        res.status(404).json({ error: 'Person not found' });
-        return;
-      }
-
-      const existingResearch = await ContextSnippet.findOne({
-        where: {
-          personId: person.id,
-          companyId: person.companyId,
-        },
-        order: [['createdAt', 'DESC']],
-      });
-
-      if (existingResearch) {
-        res.json({
-          message: 'Research found in database',
-          isExisting: true,
-          data: existingResearch,
-          jobId: null,
-        });
-        return;
-      }
-
-      const job = await researchQueue.add('research', {
-        personId: person.id,
-        companyId: person.companyId,
-      });
-
-      res.json({
-        message: 'Research job started',
-        isExisting: false,
-        jobId: job.id,
-      });
-    } catch (error) {
-      console.error('Failed to trigger research:', error);
-      res.status(500).json({ error: 'Failed to trigger research' });
-    }
-  }
-
-  /**
-   * @swagger
-   * /api/research/jobs/{job_id}:
+   * /research/jobs/{job_id}:
    *   get:
    *     summary: Get the status of a research job
    *     tags: [Research]
@@ -181,7 +103,7 @@ export class ResearchController {
 
   /**
    * @swagger
-   * /api/research/status:
+   * /research/status:
    *   put:
    *     summary: Bulk update research status for multiple people
    *     tags: [Research]
@@ -214,7 +136,10 @@ export class ResearchController {
    *       500:
    *         $ref: '#/components/responses/InternalError'
    */
-  public static async bulkUpdateResearchStatus(req: Request, res: Response): Promise<void> {
+  public static async bulkUpdateResearchStatus(
+    req: Request,
+    res: Response,
+  ): Promise<void> {
     const { personIds, status } = req.body;
 
     try {
@@ -224,7 +149,7 @@ export class ResearchController {
           where: {
             id: personIds,
           },
-        }
+        },
       );
 
       if (status === 'completed') {
