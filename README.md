@@ -79,6 +79,15 @@ npm run dev
 
 After running the seed data, you can interact with the backend API using the following sequence of calls:
 
+## Health Checks
+The service provides a health endpoint at `/healthz` that monitors:
+- Database connectivity
+- Redis connection
+- Worker status
+```bash
+curl -X GET http://localhost:3000/healthz -H "x-api-key: YOUR_AUTH_AUTH_API_KEY"
+```
+
 ### 1. Get People
 Retrieve the list of all people:
 ```bash
@@ -161,9 +170,4 @@ Planned integrations:
 - Set up alert system for failed jobs
 - Add performance monitoring
 
-## Health Checks
-The service provides a health endpoint at `/healthz` that monitors:
-- Database connectivity
-- Redis connection
-- Worker status
 
