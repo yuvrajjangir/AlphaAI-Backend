@@ -6,7 +6,7 @@ dotenv.config();
 const sequelize = new Sequelize(process.env.DATABASE_URL!, {
   dialect: 'postgres',
   protocol: 'postgres',
-  logging: true, // Enable logging to see what's happening
+  logging: true,
   define: {
     timestamps: true,
     underscored: true,

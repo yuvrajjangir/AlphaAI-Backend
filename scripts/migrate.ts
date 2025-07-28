@@ -8,7 +8,6 @@ async function migrate() {
   const migrationsDir = path.join(__dirname, 'src', 'migrations');
   
   try {
-    // Create migrations table if it doesn't exist
     await queryInterface.createTable('migrations', {
       id: {
         type: DataTypes.INTEGER,
@@ -26,24 +25,21 @@ async function migrate() {
       }
     }).catch(err => {
       if (err.message.includes('already exists')) {
-        return; // Table already exists, continue
+        return;
       }
       throw err;
     });
 
-    // Get executed migrations
     const executedMigrations = await sequelize.query(
       'SELECT name FROM migrations',
       { type: 'SELECT' }
     );
     const executedNames = new Set(executedMigrations.map((m: any) => m.name));
 
-    // Get all migration files
     const files = fs.readdirSync(migrationsDir)
       .filter(file => file.endsWith('.ts'))
       .sort();
 
-    // Run pending migrations
     for (const file of files) {
       if (!executedNames.has(file)) {
         const migration = require(path.join(migrationsDir, file));
@@ -60,7 +56,6 @@ async function migrate() {
       }
     }
 
-    // Create context_snippets table
     try {
       await sequelize.query('DROP TABLE IF EXISTS context_snippets CASCADE;');
       console.log('Dropped existing context_snippets table');

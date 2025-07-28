@@ -29,12 +29,15 @@ router.post(
   '/enrich/:person_id',
   apiKeyAuth,
   PeopleController.triggerEnrichment,
-); // Alias for research endpoint
+);
+
+// Alias for research endpoint
 router.get(
   '/research/jobs/:job_id',
   apiKeyAuth,
   ResearchController.getJobStatus,
 );
+
 router.put(
   '/research/status',
   apiKeyAuth,
@@ -42,12 +45,16 @@ router.put(
 );
 
 // Snippets routes
-router.get('/snippets/company/:company_id', SnippetsController.getByCompany);
+router.get(
+  '/snippets/company/:company_id',
+  apiKeyAuth,
+  SnippetsController.getByCompany,
+);
 
 // SSE endpoints
 router.get('/events/jobs/:jobId', EventsController.streamJobUpdates);
 
 // Health check
-router.get('/healthz', HealthController.check);
+router.get('/healthz', apiKeyAuth, HealthController.check);
 
 export default router;
