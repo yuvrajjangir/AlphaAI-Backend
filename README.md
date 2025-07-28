@@ -16,7 +16,8 @@ A TypeScript-based backend service for enriching and researching company and peo
 DATABASE_URL=your_postgres_connection_string
 REDIS_URL=your_redis_connection_string
 PORT=3000
-GEMINI_API_KEY=your_gemini_api_key
+GEMINI_AUTH_API_KEY=your_gemini_AUTH_API_KEY
+AUTH_AUTH_API_KEY=your_auth_AUTH_API_KEY
 ```
 
 ### Running with Docker Compose
@@ -49,22 +50,43 @@ npm install
 # Run migrations
 npm run migrate
 
+# Run Seed Data
+npm run seed
+
 # Start the server
 npm run dev
 ```
 
-## Triggering Enrichment
+## API Usage After Seeding Data
 
-### Via API
-Send a POST request to trigger enrichment for a person:
-```
-POST /api/people/{personId}/enrich
-```
+After running the seed data, you can interact with the backend API using the following sequence of calls:
 
-Example:
+### 1. Get People
+Retrieve the list of all people:
 ```bash
-curl -X POST http://localhost:3000/api/people/123/enrich
+curl -X GET http://localhost:3000/api/people -H "x-api-key: YOUR_AUTH_AUTH_API_KEY"
 ```
+
+### 2. Trigger Enrichment for a Person
+Trigger enrichment for a specific person by their ID:
+```bash
+curl -X POST http://localhost:3000/api/enrich/{person_id} -H "x-api-key: YOUR_AUTH_AUTH_API_KEY"
+```
+
+### 3. Check Job Status
+Check the status of a research job by its job ID:
+```bash
+curl -X GET http://localhost:3000/api/research/jobs/{job_id} -H "x-api-key: YOUR_AUTH_AUTH_API_KEY"
+```
+
+### 4. Get All Snippets for a Company
+Retrieve all snippets associated with a specific company by its ID:
+```bash
+curl -X GET http://localhost:3000/api/snippets/company/{company_id} -H "x-api-key: YOUR_AUTH_AUTH_API_KEY"
+```
+
+Replace `YOUR_AUTH_AUTH_API_KEY` with your actual API key and substitute `{person_id}`, `{job_id}`, and `{company_id}` with the appropriate IDs.
+
 
 ### Via UI
 1. Navigate to the People List in the frontend
