@@ -90,7 +90,7 @@ Replace `YOUR_AUTH_AUTH_API_KEY` with your actual API key and substitute `{perso
 
 ### Via UI
 1. Navigate to the People List in the frontend
-2. Click the "Enrich" button next to a person
+2. Click the "Research" button next to a person
 3. Monitor progress in the Research Progress component
 
 ## Search Modes
